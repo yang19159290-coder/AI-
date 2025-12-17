@@ -55,7 +55,14 @@ export const TRANSLATIONS = {
     scenePlaceholder: "请输入或通过图片分析生成场景描述...",
     font_size: "字号",
     top_prompt_placeholder: "在此输入置顶提示词 (例如: --ar 3:2 --v 6.0)...",
-    top_prompt_label: "置顶提示词 (Prompt Prefix)"
+    top_prompt_label: "置顶提示词 (Prompt Prefix)",
+    apiKey_btn: "设置 API Key",
+    apiKey_modal_title: "配置 Gemini API Key",
+    apiKey_placeholder: "在此粘贴您的 Google Gemini API Key",
+    apiKey_save: "保存并关闭",
+    apiKey_help: "没有 Key? 点击此处获取",
+    apiKey_missing_alert: "请先点击右上角设置 API Key 才能继续使用。",
+    apiKey_saved: "API Key 已保存"
   },
   en: {
     title: "AI Storyboard Pro",
@@ -81,6 +88,13 @@ export const TRANSLATIONS = {
     scenePlaceholder: "Enter scene description or analyze an image...",
     font_size: "Font Size",
     top_prompt_placeholder: "Enter top prompt here (e.g., --ar 3:2 --v 6.0)...",
-    top_prompt_label: "Top Prompt (Prompt Prefix)"
+    top_prompt_label: "Top Prompt (Prompt Prefix)",
+    apiKey_btn: "Set API Key",
+    apiKey_modal_title: "Configure Gemini API Key",
+    apiKey_placeholder: "Paste your Google Gemini API Key here",
+    apiKey_save: "Save & Close",
+    apiKey_help: "No Key? Get one here",
+    apiKey_missing_alert: "Please set your API Key in the top right corner to proceed.",
+    apiKey_saved: "API Key Saved"
   }
 };

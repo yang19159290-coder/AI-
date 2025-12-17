@@ -1,9 +1,10 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { LayoutGrid, Sparkles, Loader2, Type } from 'lucide-react';
+import { LayoutGrid, Sparkles, Loader2, Type, Key } from 'lucide-react';
 import ImageUploader from './components/ImageUploader';
 import SceneAnalysis from './components/SceneAnalysis';
 import ShotConfigurator from './components/ShotConfigurator';
 import ResultDisplay from './components/ResultDisplay';
+import ApiKeyModal from './components/ApiKeyModal';
 import { analyzeImageForScene, generateStoryboardContent, generateSingleShotContent } from './services/geminiService';
 import { GridConfig, ShotDefinition, PromptTemplateData, Language, FontSize } from './types';
 import { DEFAULT_SCENE, GRID_OPTIONS, TRANSLATIONS } from './constants';
@@ -15,7 +16,8 @@ const STORAGE_KEYS = {
   GRID_CONFIG: 'sb_grid_config',
   TOP_PROMPT: 'sb_top_prompt',
   SCENE_DESC: 'sb_scene_desc',
-  SHOTS: 'sb_shots'
+  SHOTS: 'sb_shots',
+  API_KEY: 'sb_api_key'
 };
 
 const App: React.FC = () => {
@@ -46,12 +48,7 @@ const App: React.FC = () => {
 
   const [topPrompt, setTopPrompt] = useState<string>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.TOP_PROMPT);
-    // If no saved prompt, we can't easily access gridConfig state here in initializer closure if we want the LATEST default.
-    // So we handle the default fallback in the useEffect or just use a safe default here if needed.
-    // But since we are persisting, we trust the saved value or generate one.
     if (saved) return saved;
-    // Fallback if nothing saved (e.g. first run)
-    // We re-parse grid config to be safe or just use default 3x3
     const savedGrid = localStorage.getItem(STORAGE_KEYS.GRID_CONFIG);
     const config = savedGrid ? JSON.parse(savedGrid) : GRID_OPTIONS[2];
     return generateDefaultPrompt(config);
@@ -66,6 +63,12 @@ const App: React.FC = () => {
     const saved = localStorage.getItem(STORAGE_KEYS.SHOTS);
     return saved ? JSON.parse(saved) : [];
   });
+
+  // API Key State
+  const [apiKey, setApiKey] = useState<string>(() => {
+    return localStorage.getItem(STORAGE_KEYS.API_KEY) || process.env.API_KEY || '';
+  });
+  const [isKeyModalOpen, setIsKeyModalOpen] = useState(false);
   
   const t = TRANSLATIONS[uiLang];
   
@@ -84,6 +87,7 @@ const App: React.FC = () => {
   useEffect(() => localStorage.setItem(STORAGE_KEYS.TOP_PROMPT, topPrompt), [topPrompt]);
   useEffect(() => localStorage.setItem(STORAGE_KEYS.SCENE_DESC, JSON.stringify(sceneDescription)), [sceneDescription]);
   useEffect(() => localStorage.setItem(STORAGE_KEYS.SHOTS, JSON.stringify(shots)), [shots]);
+  useEffect(() => localStorage.setItem(STORAGE_KEYS.API_KEY, apiKey), [apiKey]);
 
   // --- Logic Effects ---
 
@@ -96,12 +100,23 @@ const App: React.FC = () => {
     setTopPrompt(generateDefaultPrompt(gridConfig));
   }, [gridConfig]);
 
+  // --- Check API Key helper ---
+  const checkApiKey = (): boolean => {
+    if (!apiKey) {
+      setIsKeyModalOpen(true);
+      alert(t.apiKey_missing_alert);
+      return false;
+    }
+    return true;
+  };
+
   // --- Handlers ---
 
   const handleImageAnalyzed = async (base64Data: string, mimeType: string) => {
+    if (!checkApiKey()) return;
     setIsAnalyzing(true);
     try {
-      const result = await analyzeImageForScene(base64Data, mimeType);
+      const result = await analyzeImageForScene(apiKey, base64Data, mimeType);
       setSceneDescription(result);
     } catch (err) {
       console.error(err);
@@ -112,6 +127,7 @@ const App: React.FC = () => {
   };
 
   const handleGenerateAll = async () => {
+    if (!checkApiKey()) return;
     // Prefer English description for generation context if available, otherwise fall back
     const finalScene = sceneDescription.en.trim() || sceneDescription.zh.trim() || DEFAULT_SCENE;
     setIsGeneratingAll(true);
@@ -121,7 +137,7 @@ const App: React.FC = () => {
 
     try {
       const shotTypes = shots.map(s => s.type);
-      const content = await generateStoryboardContent(finalScene, gridConfig.label, shotTypes);
+      const content = await generateStoryboardContent(apiKey, finalScene, gridConfig.label, shotTypes);
 
       // Update refined scene description if available
       if (content.en.sceneDescription) {
@@ -150,6 +166,7 @@ const App: React.FC = () => {
   };
 
   const handleGenerateSingle = async (id: number) => {
+    if (!checkApiKey()) return;
     const finalScene = sceneDescription.en.trim() || sceneDescription.zh.trim() || DEFAULT_SCENE;
     const shotToUpdate = shots.find(s => s.id === id);
     if (!shotToUpdate) return;
@@ -157,7 +174,7 @@ const App: React.FC = () => {
     setShots(prev => prev.map(s => s.id === id ? { ...s, isLoading: true } : s));
 
     try {
-      const result = await generateSingleShotContent(finalScene, shotToUpdate.type);
+      const result = await generateSingleShotContent(apiKey, finalScene, shotToUpdate.type);
       
       setShots(prev => prev.map(s => s.id === id ? { 
         ...s, 
@@ -206,6 +223,14 @@ const App: React.FC = () => {
   return (
     <div className="h-screen bg-slate-950 text-slate-200 font-inter overflow-hidden flex flex-col">
       
+      <ApiKeyModal 
+        isOpen={isKeyModalOpen} 
+        onClose={() => setIsKeyModalOpen(false)}
+        apiKey={apiKey}
+        setApiKey={setApiKey}
+        t={t}
+      />
+
       {/* Top Bar */}
       <header className="h-14 border-b border-slate-800 bg-slate-900 flex items-center justify-between px-6 flex-shrink-0 z-20">
         <div className="flex items-center gap-3">
@@ -219,6 +244,18 @@ const App: React.FC = () => {
         </div>
 
         <div className="flex gap-4 items-center">
+             
+             {/* API Key Button */}
+             <button
+               onClick={() => setIsKeyModalOpen(true)}
+               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+                 apiKey ? 'bg-slate-800 text-slate-400 hover:text-white' : 'bg-red-900/30 text-red-400 hover:bg-red-900/50 border border-red-800/50'
+               }`}
+             >
+               <Key className="w-3.5 h-3.5" />
+               <span className="hidden sm:inline">{apiKey ? 'API Key' : t.apiKey_btn}</span>
+             </button>
+
              {/* Font Size Toggle */}
              <div className="flex items-center gap-2 bg-slate-800 rounded-lg p-1">
                 <Type className="w-3 h-3 text-slate-400 ml-1" />

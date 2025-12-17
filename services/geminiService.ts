@@ -1,14 +1,15 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { DualLanguageContent } from "../types";
 
-const getAI = () => new GoogleGenAI({ apiKey: process.env.API_KEY });
+const getAI = (apiKey: string) => new GoogleGenAI({ apiKey });
 
 /**
  * Analyzes an image to get a detailed scene description suitable for image generation prompts.
  * Returns both English and Chinese versions.
  */
-export const analyzeImageForScene = async (base64Data: string, mimeType: string): Promise<{en: string, zh: string}> => {
-  const ai = getAI();
+export const analyzeImageForScene = async (apiKey: string, base64Data: string, mimeType: string): Promise<{en: string, zh: string}> => {
+  if (!apiKey) throw new Error("API Key is missing");
+  const ai = getAI(apiKey);
   
   try {
     const response = await ai.models.generateContent({
@@ -55,11 +56,13 @@ export const analyzeImageForScene = async (base64Data: string, mimeType: string)
  * Generates the specific storyboard shots based on the scene and requested shot types.
  */
 export const generateStoryboardContent = async (
+  apiKey: string,
   sceneDescription: string,
   gridLabel: string,
   requestedShots: string[]
 ): Promise<DualLanguageContent> => {
-  const ai = getAI();
+  if (!apiKey) throw new Error("API Key is missing");
+  const ai = getAI(apiKey);
   const totalShots = requestedShots.length;
   
   const prompt = `
@@ -123,10 +126,12 @@ export const generateStoryboardContent = async (
  * Generates a SINGLE shot description.
  */
 export const generateSingleShotContent = async (
+  apiKey: string,
   sceneDescription: string,
   shotType: string
 ): Promise<{ en: string; zh: string }> => {
-  const ai = getAI();
+  if (!apiKey) throw new Error("API Key is missing");
+  const ai = getAI(apiKey);
   
   const prompt = `
     Context:

@@ -118,9 +118,10 @@ const App: React.FC = () => {
     try {
       const result = await analyzeImageForScene(apiKey, base64Data, mimeType);
       setSceneDescription(result);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert("Failed to analyze image. Ensure your API Key is valid and the image is supported.");
+      const msg = err instanceof Error ? err.message : JSON.stringify(err);
+      alert(`Analysis failed: ${msg}`);
     } finally {
       setIsAnalyzing(false);
     }
@@ -157,8 +158,10 @@ const App: React.FC = () => {
         isLoading: false
       })));
 
-    } catch (err) {
-      alert("Failed to generate.");
+    } catch (err: any) {
+      console.error(err);
+      const msg = err instanceof Error ? err.message : JSON.stringify(err);
+      alert(`Generation failed: ${msg}`);
       setShots(prev => prev.map(s => ({ ...s, isLoading: false })));
     } finally {
       setIsGeneratingAll(false);
@@ -182,8 +185,10 @@ const App: React.FC = () => {
         isLoading: false 
       } : s));
 
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      const msg = err instanceof Error ? err.message : JSON.stringify(err);
+      alert(`Single shot generation failed: ${msg}`);
       setShots(prev => prev.map(s => s.id === id ? { ...s, isLoading: false } : s));
     }
   };

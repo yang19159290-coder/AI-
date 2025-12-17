@@ -85,8 +85,9 @@ export const generateStoryboardContent = async (
   `;
 
   try {
+    // Switched to gemini-2.5-flash for better stability and availability on standard keys
     const response = await ai.models.generateContent({
-      model: 'gemini-3-pro-preview',
+      model: 'gemini-2.5-flash',
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -149,8 +150,9 @@ export const generateSingleShotContent = async (
   `;
 
   try {
+    // Switched to gemini-2.5-flash for better stability and availability on standard keys
     const response = await ai.models.generateContent({
-      model: 'gemini-3-pro-preview',
+      model: 'gemini-2.5-flash',
       contents: prompt,
       config: {
         responseMimeType: "application/json",

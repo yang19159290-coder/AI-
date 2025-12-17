@@ -12,7 +12,7 @@ export const analyzeImageForScene = async (base64Data: string, mimeType: string)
   
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash', // Switched to Flash for faster and more robust image analysis
+      model: 'gemini-2.5-flash',
       contents: {
         parts: [
           {
@@ -22,24 +22,29 @@ export const analyzeImageForScene = async (base64Data: string, mimeType: string)
             },
           },
           {
-            text: "Analyze this image and provide a highly descriptive prompt suitable for an AI image generator (like Midjourney or Stable Diffusion). Focus on the subject, setting, lighting, artistic style, clothing, and atmosphere. Provide both English ('en') and Chinese ('zh') versions. Output JSON.",
+            text: "Analyze this image and provide a highly descriptive prompt suitable for an AI image generator (like Midjourney or Stable Diffusion). Focus on the subject, setting, lighting, artistic style, clothing, and atmosphere. Provide both English ('en') and Chinese ('zh') versions. Output strict JSON format.",
           },
         ],
       },
       config: {
         responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            en: { type: Type.STRING },
-            zh: { type: Type.STRING }
-          },
-          required: ["en", "zh"]
-        }
+        // Removing strict responseSchema to avoid potential 400 errors with image inputs
+        // The model is robust enough to return JSON with responseMimeType
       }
     });
 
-    return JSON.parse(response.text || '{"en":"", "zh":""}') as {en: string, zh: string};
+    const text = response.text || "{}";
+    try {
+      const parsed = JSON.parse(text);
+      // Ensure structure matches
+      return {
+        en: parsed.en || "",
+        zh: parsed.zh || ""
+      };
+    } catch (e) {
+      console.warn("JSON parse failed, returning raw text or empty", text);
+      return { en: "", zh: "" };
+    }
   } catch (error) {
     console.error("Error analyzing image:", error);
     throw error;

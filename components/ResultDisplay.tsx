@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PromptTemplateData, Language, FontSize } from '../types';
-import { Copy, Check, ArrowDownToLine } from 'lucide-react';
+import { Copy, Check } from 'lucide-react';
 import { TRANSLATIONS } from '../constants';
 
 interface ResultDisplayProps {

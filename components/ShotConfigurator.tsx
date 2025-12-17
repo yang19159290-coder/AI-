@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { GridConfig, ShotDefinition, Language, FontSize } from '../types';
 import { GRID_OPTIONS, SHOT_OPTS, TRANSLATIONS } from '../constants';
-import { Play, RotateCw, Loader2, RefreshCw } from 'lucide-react';
+import { Play, Loader2 } from 'lucide-react';
 
 interface ShotConfiguratorProps {
   gridConfig: GridConfig;
@@ -85,7 +85,7 @@ const ShotConfigurator: React.FC<ShotConfiguratorProps> = ({
         className="grid gap-4 flex-1 overflow-y-auto custom-scrollbar p-1"
         style={{ gridTemplateColumns: `repeat(${gridConfig.cols}, minmax(0, 1fr))` }}
       >
-        {shots.map((shot, index) => {
+        {shots.map((shot) => {
           const contentText = shot.content ? (contentLang === 'zh' ? shot.content.zh : shot.content.en) : "";
           
           return (

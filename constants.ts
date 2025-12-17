@@ -1,0 +1,86 @@
+import { GridConfig } from './types';
+
+export const GRID_OPTIONS: GridConfig[] = [
+  { rows: 2, cols: 2, label: '2x2' },
+  { rows: 3, cols: 2, label: '3x2' },
+  { rows: 3, cols: 3, label: '3x3' },
+  { rows: 4, cols: 3, label: '4x3' },
+];
+
+export const SHOT_OPTS = [
+  { value: 'Extreme Wide Shot', label: '极远景 (Extreme Wide)' },
+  { value: 'Wide Shot', label: '远景 (Wide Shot)' },
+  { value: 'Full Shot', label: '全景 (Full Shot)' },
+  { value: 'Medium Wide Shot', label: '中远景 (Medium Wide)' },
+  { value: 'Medium Shot', label: '中景 (Medium Shot)' },
+  { value: 'Medium Close Up', label: '中近景 (Medium Close Up)' },
+  { value: 'Close Up', label: '特写 (Close Up)' },
+  { value: 'Extreme Close Up', label: '大特写 (Extreme Close Up)' },
+  { value: 'Low Angle', label: '低角度 (Low Angle)' },
+  { value: 'High Angle', label: '高角度 (High Angle)' },
+  { value: 'Over the Shoulder', label: '过肩镜头 (Over Shoulder)' },
+  { value: 'Dutch Angle', label: '荷兰角 (Dutch Angle)' },
+  { value: 'Bird\'s Eye View', label: '鸟瞰图 (Bird\'s Eye)' },
+  { value: 'Worm\'s Eye View', label: '虫视点 (Worm\'s Eye)' },
+  { value: 'POV', label: '第一人称 (POV)' },
+  { value: 'Macro', label: '微距 (Macro)' },
+  { value: 'Silhouette', label: '剪影 (Silhouette)' },
+  { value: 'Knees up', label: '七分身 (Knees up)' },
+];
+
+export const DEFAULT_SCENE = "A cyberpunk street market at night, neon lights reflecting on wet pavement, diverse crowd, futuristic stalls selling robotics.";
+
+export const TRANSLATIONS = {
+  zh: {
+    title: "AI 分镜生成器 Pro",
+    subtitle: "智能分析 · 多尺寸网格 · 精细化控制",
+    section1: "参考图",
+    section_scene: "场景描述 (分析结果)",
+    section2: "分镜网格编辑",
+    section3: "最终导出预览",
+    step1_btn: "开始分析",
+    step1_desc: "点击上传图片",
+    uploadPlaceholder: "点击上传或拖拽图片",
+    analyzing: "正在分析场景...",
+    scene_label: "场景描述",
+    grid_label: "网格",
+    waiting: "等待生成...",
+    generating: "生成中...",
+    generate_all: "批量生成全部分镜",
+    export_label: "提示词预览",
+    copy: "复制",
+    copied: "已复制",
+    uiSwitch: "EN/中",
+    placeholderDesc: "请在右侧配置并生成分镜，结果将在此显示。",
+    scenePlaceholder: "请输入或通过图片分析生成场景描述...",
+    font_size: "字号",
+    top_prompt_placeholder: "在此输入置顶提示词 (例如: --ar 3:2 --v 6.0)...",
+    top_prompt_label: "置顶提示词 (Prompt Prefix)"
+  },
+  en: {
+    title: "AI Storyboard Pro",
+    subtitle: "Smart Analysis · Multi-grid · Precision Control",
+    section1: "Reference Image",
+    section_scene: "Scene Description (Analysis)",
+    section2: "Storyboard Grid Editor",
+    section3: "Final Export Preview",
+    step1_btn: "Start Analysis",
+    step1_desc: "Click to upload image",
+    uploadPlaceholder: "Click to upload or drag image",
+    analyzing: "Analyzing...",
+    scene_label: "Scene Description",
+    grid_label: "Grid",
+    waiting: "Waiting for generation...",
+    generating: "Generating...",
+    generate_all: "Generate All Shots",
+    export_label: "Prompt Preview",
+    copy: "Copy",
+    copied: "Copied",
+    uiSwitch: "EN/中",
+    placeholderDesc: "Configure and generate shots on the right to see results here.",
+    scenePlaceholder: "Enter scene description or analyze an image...",
+    font_size: "Font Size",
+    top_prompt_placeholder: "Enter top prompt here (e.g., --ar 3:2 --v 6.0)...",
+    top_prompt_label: "Top Prompt (Prompt Prefix)"
+  }
+};

@@ -1,0 +1,5 @@
+{
+  "name": "AI分镜故事板",
+  "description": "Generate consistent storyboard prompts from reference images using Gemini 2.5 Flash.",
+  "requestFramePermissions": []
+}

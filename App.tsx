@@ -98,13 +98,14 @@ const App: React.FC = () => {
 
   // --- Handlers ---
 
-  const handleImageAnalyzed = async (base64Data: string) => {
+  const handleImageAnalyzed = async (base64Data: string, mimeType: string) => {
     setIsAnalyzing(true);
     try {
-      const result = await analyzeImageForScene(base64Data, "image/jpeg");
+      const result = await analyzeImageForScene(base64Data, mimeType);
       setSceneDescription(result);
     } catch (err) {
-      alert("Failed to analyze image.");
+      console.error(err);
+      alert("Failed to analyze image. Ensure your API Key is valid and the image is supported.");
     } finally {
       setIsAnalyzing(false);
     }

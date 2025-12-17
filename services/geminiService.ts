@@ -12,7 +12,7 @@ export const analyzeImageForScene = async (base64Data: string, mimeType: string)
   
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-pro-preview',
+      model: 'gemini-2.5-flash', // Switched to Flash for faster and more robust image analysis
       contents: {
         parts: [
           {

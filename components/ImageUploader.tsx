@@ -3,7 +3,7 @@ import { Upload, X, Loader2, ImageIcon } from 'lucide-react';
 import { TRANSLATIONS } from '../constants';
 
 interface ImageUploaderProps {
-  onImageAnalyzed: (description: string) => void;
+  onImageAnalyzed: (description: string, mimeType: string) => void;
   isAnalyzing: boolean;
   t: typeof TRANSLATIONS['en'];
 }
@@ -24,8 +24,11 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageAnalyzed, isAnalyz
     if (!file) return;
     const reader = new FileReader();
     reader.onloadend = () => {
-      const base64String = (reader.result as string).split(',')[1];
-      onImageAnalyzed(base64String);
+      const result = reader.result as string;
+      const base64String = result.split(',')[1];
+      // Extract mime type from data URL or file object, default to jpeg if missing
+      const mimeType = file.type || 'image/jpeg';
+      onImageAnalyzed(base64String, mimeType);
     };
     reader.readAsDataURL(file);
   };
